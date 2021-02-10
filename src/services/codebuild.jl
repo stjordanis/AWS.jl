@@ -264,14 +264,14 @@ describe_test_cases(reportArn, args::AbstractDict{String, <:Any}; aws_config::Ab
 """
     GetReportGroupTrend()
 
-
+Analyzes and accumulates test report values for the specified test reports.
 
 # Required Parameters
-- `reportGroupArn`: 
-- `trendField`: 
+- `reportGroupArn`: The ARN of the report group that contains the reports to analyze.
+- `trendField`: The test report value to accumulate. This must be one of the following values:  Test reports:   DURATION  Accumulate the test run times for the specified reports.  PASS_RATE  Accumulate the percentage of tests that passed for the specified test reports.  TOTAL  Accumulate the total number of tests for the specified test reports.      Code coverage reports:   BRANCH_COVERAGE  Accumulate the branch coverage percentages for the specified test reports.  BRANCHES_COVERED  Accumulate the branches covered values for the specified test reports.  BRANCHES_MISSED  Accumulate the branches missed values for the specified test reports.  LINE_COVERAGE  Accumulate the line coverage percentages for the specified test reports.  LINES_COVERED  Accumulate the lines covered values for the specified test reports.  LINES_MISSED  Accumulate the lines not covered values for the specified test reports.    
 
 # Optional Parameters
-- `numOfReports`: 
+- `numOfReports`: The number of reports to analyze. This operation always retrieves the most recent reports. If this parameter is omitted, the most recent 100 reports are analyzed.
 """
 get_report_group_trend(reportGroupArn, trendField; aws_config::AbstractAWSConfig=global_aws_config()) = codebuild("GetReportGroupTrend", Dict{String, Any}("reportGroupArn"=>reportGroupArn, "trendField"=>trendField); aws_config=aws_config)
 get_report_group_trend(reportGroupArn, trendField, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = codebuild("GetReportGroupTrend", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("reportGroupArn"=>reportGroupArn, "trendField"=>trendField), args)); aws_config=aws_config)
@@ -361,14 +361,14 @@ list_builds(args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=glo
 """
     ListBuildsForProject()
 
-Gets a list of build IDs for the specified build project, with each build ID representing a single build.
+Gets a list of build identifiers for the specified build project, with each build identifier representing a single build.
 
 # Required Parameters
 - `projectName`: The name of the AWS CodeBuild project.
 
 # Optional Parameters
 - `nextToken`: During a previous call, if there are more than 100 items in the list, only the first 100 items are returned, along with a unique string called a nextToken. To get the next batch of items in the list, call this operation again, adding the next token to the call. To get all of the items in the list, keep calling this operation with each subsequent next token that is returned, until no more next tokens are returned.
-- `sortOrder`: The order to list build IDs. Valid values include:    ASCENDING: List the build IDs in ascending order by build ID.    DESCENDING: List the build IDs in descending order by build ID.  
+- `sortOrder`: The order to list results in. The results are sorted by build number, not the build identifier. Valid values include:    ASCENDING: List the build IDs in ascending order by build ID.    DESCENDING: List the build IDs in descending order by build ID.   If the project has more than 100 builds, setting the sort order will result in an error. 
 """
 list_builds_for_project(projectName; aws_config::AbstractAWSConfig=global_aws_config()) = codebuild("ListBuildsForProject", Dict{String, Any}("projectName"=>projectName); aws_config=aws_config)
 list_builds_for_project(projectName, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = codebuild("ListBuildsForProject", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("projectName"=>projectName), args)); aws_config=aws_config)
@@ -544,7 +544,7 @@ Starts running a build.
 - `privilegedModeOverride`: Enable this flag to override privileged mode in the build project.
 - `queuedTimeoutInMinutesOverride`:  The number of minutes a build is allowed to be queued before it times out. 
 - `registryCredentialOverride`:  The credentials for access to a private registry. 
-- `reportBuildStatusOverride`:  Set to true to report to your source provider the status of a build's start and completion. If you use this option with a source provider other than GitHub, GitHub Enterprise, or Bitbucket, an invalidInputException is thrown.    The status of a build triggered by a webhook is always reported to your source provider.  
+- `reportBuildStatusOverride`:  Set to true to report to your source provider the status of a build's start and completion. If you use this option with a source provider other than GitHub, GitHub Enterprise, or Bitbucket, an invalidInputException is thrown.  To be able to report the build status to the source provider, the user associated with the source provider must have write access to the repo. If the user does not have write access, the build status cannot be updated. For more information, see Source provider access in the AWS CodeBuild User Guide.   The status of a build triggered by a webhook is always reported to your source provider.  
 - `secondaryArtifactsOverride`:  An array of ProjectArtifacts objects. 
 - `secondarySourcesOverride`:  An array of ProjectSource objects. 
 - `secondarySourcesVersionOverride`:  An array of ProjectSourceVersion objects that specify one or more versions of the project's secondary sources to be used for this build only. 

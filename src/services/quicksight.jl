@@ -91,6 +91,7 @@ Creates a dataset.
 # Optional Parameters
 - `ColumnGroups`: Groupings of columns that work together in certain QuickSight features. Currently, only geospatial hierarchy is supported.
 - `ColumnLevelPermissionRules`: A set of one or more definitions of a  ColumnLevelPermissionRule .
+- `FieldFolders`: The folder that contains fields and nested subfolders for your dataset.
 - `LogicalTableMap`: Configures the combination and transformation of the data from the physical tables.
 - `Permissions`: A list of resource permissions on the dataset.
 - `RowLevelPermissionDataSet`: The row-level security configuration for the data that you want to create.
@@ -1344,6 +1345,7 @@ Updates a dataset.
 # Optional Parameters
 - `ColumnGroups`: Groupings of columns that work together in certain QuickSight features. Currently, only geospatial hierarchy is supported.
 - `ColumnLevelPermissionRules`: A set of one or more definitions of a  ColumnLevelPermissionRule .
+- `FieldFolders`: The folder that contains fields and nested subfolders for your dataset.
 - `LogicalTableMap`: Configures the combination and transformation of the data from the physical tables.
 - `RowLevelPermissionDataSet`: The row-level security configuration for the data you want to create.
 """

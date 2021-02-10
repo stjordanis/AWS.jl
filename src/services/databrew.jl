@@ -217,6 +217,19 @@ describe_job(name; aws_config::AbstractAWSConfig=global_aws_config()) = databrew
 describe_job(name, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = databrew("GET", "/jobs/$(name)", args; aws_config=aws_config)
 
 """
+    DescribeJobRun()
+
+Represents one run of a DataBrew job.
+
+# Required Parameters
+- `name`: The name of the job being processed during this run.
+- `runId`: The unique identifier of the job run.
+
+"""
+describe_job_run(name, runId; aws_config::AbstractAWSConfig=global_aws_config()) = databrew("GET", "/jobs/$(name)/jobRun/$(runId)"; aws_config=aws_config)
+describe_job_run(name, runId, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = databrew("GET", "/jobs/$(name)/jobRun/$(runId)", args; aws_config=aws_config)
+
+"""
     DescribeProject()
 
 Returns the definition of a specific DataBrew project.

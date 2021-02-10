@@ -568,7 +568,7 @@ Sends a decrypted application data frame to a device.
 # Required Parameters
 - `Id`: The ID of the wireless device to receive the data.
 - `PayloadData`: The message payload to send.
-- `TransmitMode`: The transmit mode to use to send data to the wireless device. Can be: 0 for UM (unacknowledge mode), 1 for AM (acknowledge mode), or 2 for (TM) transparent mode.
+- `TransmitMode`: The transmit mode to use to send data to the wireless device. Can be: 0 for UM (unacknowledge mode) or 1 for AM (acknowledge mode).
 
 # Optional Parameters
 - `WirelessMetadata`: Metadata about the message request.

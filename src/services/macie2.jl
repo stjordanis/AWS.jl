@@ -410,10 +410,11 @@ get_member(id, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=
 Retrieves (queries) quotas and aggregated usage data for one or more accounts.
 
 # Optional Parameters
-- `filterBy`: An array of objects, one for each condition to use to filter the query results. If the array contains more than one object, Amazon Macie uses an AND operator to join the conditions specified by the objects.
+- `filterBy`: An array of objects, one for each condition to use to filter the query results. If you specify more than one condition, Amazon Macie uses an AND operator to join the conditions.
 - `maxResults`: The maximum number of items to include in each page of the response.
 - `nextToken`: The nextToken string that specifies which page of results to return in a paginated response.
 - `sortBy`: The criteria to use to sort the query results.
+- `timeRange`: The inclusive time period to query usage data for. Valid values are: MONTH_TO_DATE, for the current calendar month to date; and, PAST_30_DAYS, for the preceding 30 days. If you don't specify a value, Amazon Macie provides usage data for the preceding 30 days.
 """
 get_usage_statistics(; aws_config::AbstractAWSConfig=global_aws_config()) = macie2("POST", "/usage/statistics"; aws_config=aws_config)
 get_usage_statistics(args::AbstractDict{String, Any}; aws_config::AbstractAWSConfig=global_aws_config()) = macie2("POST", "/usage/statistics", args; aws_config=aws_config)
@@ -423,6 +424,8 @@ get_usage_statistics(args::AbstractDict{String, Any}; aws_config::AbstractAWSCon
 
 Retrieves (queries) aggregated usage data for an account.
 
+# Optional Parameters
+- `timeRange`: The time period to retrieve the data for. Valid values are: MONTH_TO_DATE, for the current calendar month to date; and, PAST_30_DAYS, for the preceding 30 days. If you don’t specify a value for this parameter, Amazon Macie provides aggregated usage data for the preceding 30 days.
 """
 get_usage_totals(; aws_config::AbstractAWSConfig=global_aws_config()) = macie2("GET", "/usage"; aws_config=aws_config)
 get_usage_totals(args::AbstractDict{String, Any}; aws_config::AbstractAWSConfig=global_aws_config()) = macie2("GET", "/usage", args; aws_config=aws_config)

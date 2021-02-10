@@ -101,6 +101,7 @@ creating multiple resources.
 - `reserved`: Deprecated field that's only usable by whitelisted customers.
 - `roleArn`: An optional Amazon Resource Name (ARN) of the role to assume when running the Channel.
 - `tags`: A collection of key-value pairs.
+- `vpc`: Settings for VPC output
 """
 create_channel(; aws_config::AbstractAWSConfig=global_aws_config()) = medialive("POST", "/prod/channels", Dict{String, Any}("requestId"=>string(uuid4())); aws_config=aws_config)
 create_channel(args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = medialive("POST", "/prod/channels", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("requestId"=>string(uuid4())), args)); aws_config=aws_config)

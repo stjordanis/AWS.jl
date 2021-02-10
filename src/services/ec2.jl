@@ -635,7 +635,7 @@ copy_fpga_image(SourceFpgaImageId, SourceRegion, args::AbstractDict{String, <:An
 """
     CopyImage()
 
-Initiates the copy of an AMI from the specified source Region to the current Region. You specify the destination Region by using its endpoint when making the request. Copies of encrypted backing snapshots for the AMI are encrypted. Copies of unencrypted backing snapshots remain unencrypted, unless you set Encrypted during the copy operation. You cannot create an unencrypted copy of an encrypted backing snapshot. For more information about the prerequisites and limits when copying an AMI, see Copying an AMI in the Amazon Elastic Compute Cloud User Guide.
+Initiates the copy of an AMI. You can copy an AMI from one Region to another, or from a Region to an AWS Outpost. You can't copy an AMI from an Outpost to a Region, from one Outpost to another, or within the same Outpost. To copy an AMI from one Region to another, specify the source Region using the SourceRegion parameter, and specify the destination Region using its endpoint. Copies of encrypted backing snapshots for the AMI are encrypted. Copies of unencrypted backing snapshots remain unencrypted, unless you set Encrypted during the copy operation. You cannot create an unencrypted copy of an encrypted backing snapshot. To copy an AMI from a Region to an Outpost, specify the source Region using the SourceRegion parameter, and specify the ARN of the destination Outpost using DestinationOutpostArn. Backing snapshots copied to an Outpost are encrypted by default using the default encryption key for the Region, or a different key that you specify in the request using KmsKeyId. Outposts do not support unencrypted snapshots. For more information,  Amazon EBS local snapshots on Outposts in the Amazon Elastic Compute Cloud User Guide.  For more information about the prerequisites and limits when copying an AMI, see Copying an AMI in the Amazon Elastic Compute Cloud User Guide.
 
 # Required Parameters
 - `Name`: The name of the new AMI in the destination Region.
@@ -645,6 +645,7 @@ Initiates the copy of an AMI from the specified source Region to the current Reg
 # Optional Parameters
 - `ClientToken`: Unique, case-sensitive identifier you provide to ensure idempotency of the request. For more information, see How to Ensure Idempotency in the Amazon Elastic Compute Cloud User Guide.
 - `Description`: A description for the new AMI in the destination Region.
+- `DestinationOutpostArn`: The Amazon Resource Name (ARN) of the Outpost to which to copy the AMI. Only specify this parameter when copying an AMI from an AWS Region to an Outpost. The AMI must be in the Region of the destination Outpost. You cannot copy an AMI from an Outpost to a Region, from one Outpost to another, or within the same Outpost. For more information, see  Copying AMIs from an AWS Region to an Outpost in the Amazon Elastic Compute Cloud User Guide.
 - `dryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 - `encrypted`: Specifies whether the destination snapshots of the copied image should be encrypted. You can encrypt a copy of an unencrypted snapshot, but you cannot create an unencrypted copy of an encrypted snapshot. The default CMK for EBS is used unless you specify a non-default AWS Key Management Service (AWS KMS) CMK using KmsKeyId. For more information, see Amazon EBS Encryption in the Amazon Elastic Compute Cloud User Guide.
 - `kmsKeyId`: The identifier of the symmetric AWS Key Management Service (AWS KMS) customer master key (CMK) to use when creating encrypted volumes. If this parameter is not specified, your AWS managed CMK for EBS is used. If you specify a CMK, you must also set the encrypted state to true. You can specify a CMK using any of the following:   Key ID. For example, 1234abcd-12ab-34cd-56ef-1234567890ab.   Key alias. For example, alias/ExampleAlias.   Key ARN. For example, arn:aws:kms:us-east-1:012345678910:key/1234abcd-12ab-34cd-56ef-1234567890ab.   Alias ARN. For example, arn:aws:kms:us-east-1:012345678910:alias/ExampleAlias.   AWS authenticates the CMK asynchronously. Therefore, if you specify an identifier that is not valid, the action can appear to complete, but eventually fails. The specified CMK must exist in the destination Region. Amazon EBS does not support asymmetric CMKs.
@@ -655,7 +656,7 @@ copy_image(Name, SourceImageId, SourceRegion, args::AbstractDict{String, <:Any};
 """
     CopySnapshot()
 
-Copies a point-in-time snapshot of an EBS volume and stores it in Amazon S3. You can copy the snapshot within the same Region or from one Region to another. You can use the snapshot to create EBS volumes or Amazon Machine Images (AMIs). Copies of encrypted EBS snapshots remain encrypted. Copies of unencrypted snapshots remain unencrypted, unless you enable encryption for the snapshot copy operation. By default, encrypted snapshot copies use the default AWS Key Management Service (AWS KMS) customer master key (CMK); however, you can specify a different CMK. To copy an encrypted snapshot that has been shared from another account, you must have permissions for the CMK used to encrypt the snapshot. Snapshots created by copying another snapshot have an arbitrary volume ID that should not be used for any purpose. For more information, see Copying an Amazon EBS snapshot in the Amazon Elastic Compute Cloud User Guide.
+Copies a point-in-time snapshot of an EBS volume and stores it in Amazon S3. You can copy a snapshot within the same Region, from one Region to another, or from a Region to an Outpost. You can't copy a snapshot from an Outpost to a Region, from one Outpost to another, or within the same Outpost. You can use the snapshot to create EBS volumes or Amazon Machine Images (AMIs). When copying snapshots to a Region, copies of encrypted EBS snapshots remain encrypted. Copies of unencrypted snapshots remain unencrypted, unless you enable encryption for the snapshot copy operation. By default, encrypted snapshot copies use the default AWS Key Management Service (AWS KMS) customer master key (CMK); however, you can specify a different CMK. To copy an encrypted snapshot that has been shared from another account, you must have permissions for the CMK used to encrypt the snapshot. Snapshots copied to an Outpost are encrypted by default using the default encryption key for the Region, or a different key that you specify in the request using KmsKeyId. Outposts do not support unencrypted snapshots. For more information,  Amazon EBS local snapshots on Outposts in the Amazon Elastic Compute Cloud User Guide. Snapshots created by copying another snapshot have an arbitrary volume ID that should not be used for any purpose. For more information, see Copying an Amazon EBS snapshot in the Amazon Elastic Compute Cloud User Guide.
 
 # Required Parameters
 - `SourceRegion`: The ID of the Region that contains the snapshot to be copied.
@@ -663,6 +664,7 @@ Copies a point-in-time snapshot of an EBS volume and stores it in Amazon S3. You
 
 # Optional Parameters
 - `Description`: A description for the EBS snapshot.
+- `DestinationOutpostArn`: The Amazon Resource Name (ARN) of the Outpost to which to copy the snapshot. Only specify this parameter when copying a snapshot from an AWS Region to an Outpost. The snapshot must be in the Region for the destination Outpost. You cannot copy a snapshot from an Outpost to a Region, from one Outpost to another, or within the same Outpost. For more information, see  Copying snapshots from an AWS Region to an Outpost in the Amazon Elastic Compute Cloud User Guide.
 - `TagSpecification`: The tags to apply to the new snapshot.
 - `destinationRegion`: The destination Region to use in the PresignedUrl parameter of a snapshot copy operation. This parameter is only valid for specifying the destination Region in a PresignedUrl parameter, where it is required. The snapshot copy is sent to the regional endpoint that you sent the HTTP request to (for example, ec2.us-east-1.amazonaws.com). With the AWS CLI, this is specified using the --region parameter or the default Region in your AWS configuration file.
 - `dryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
@@ -851,7 +853,7 @@ Launches an EC2 Fleet. You can create a single EC2 Fleet that includes multiple 
 - `ExcessCapacityTerminationPolicy`: Indicates whether running instances should be terminated if the total target capacity of the EC2 Fleet is decreased below the current size of the EC2 Fleet.
 - `LaunchTemplateConfigs`: The configuration for the EC2 Fleet.
 - `OnDemandOptions`: Describes the configuration of On-Demand Instances in an EC2 Fleet.
-- `ReplaceUnhealthyInstances`: Indicates whether EC2 Fleet should replace unhealthy instances.
+- `ReplaceUnhealthyInstances`: Indicates whether EC2 Fleet should replace unhealthy Spot Instances. Supported only for fleets of type maintain. For more information, see EC2 Fleet health checks in the Amazon EC2 User Guide.
 - `SpotOptions`: Describes the configuration of Spot Instances in an EC2 Fleet.
 - `TagSpecification`: The key-value pair for tagging the EC2 Fleet request on creation. The value for ResourceType must be fleet, otherwise the fleet request fails. To tag instances at launch, specify the tags in the launch template. For information about tagging after launch, see Tagging your resources.
 - `TerminateInstancesWithExpiration`: Indicates whether running instances should be terminated when the EC2 Fleet expires.
@@ -1263,13 +1265,14 @@ create_security_group(GroupDescription, GroupName, args::AbstractDict{String, <:
 """
     CreateSnapshot()
 
-Creates a snapshot of an EBS volume and stores it in Amazon S3. You can use snapshots for backups, to make copies of EBS volumes, and to save data before shutting down an instance. When a snapshot is created, any AWS Marketplace product codes that are associated with the source volume are propagated to the snapshot. You can take a snapshot of an attached volume that is in use. However, snapshots only capture data that has been written to your EBS volume at the time the snapshot command is issued; this might exclude any data that has been cached by any applications or the operating system. If you can pause any file systems on the volume long enough to take a snapshot, your snapshot should be complete. However, if you cannot pause all file writes to the volume, you should unmount the volume from within the instance, issue the snapshot command, and then remount the volume to ensure a consistent and complete snapshot. You may remount and use your volume while the snapshot status is pending. To create a snapshot for EBS volumes that serve as root devices, you should stop the instance before taking the snapshot. Snapshots that are taken from encrypted volumes are automatically encrypted. Volumes that are created from encrypted snapshots are also automatically encrypted. Your encrypted volumes and any associated snapshots always remain protected. You can tag your snapshots during creation. For more information, see Tagging your Amazon EC2 resources in the Amazon Elastic Compute Cloud User Guide. For more information, see Amazon Elastic Block Store and Amazon EBS encryption in the Amazon Elastic Compute Cloud User Guide.
+Creates a snapshot of an EBS volume and stores it in Amazon S3. You can use snapshots for backups, to make copies of EBS volumes, and to save data before shutting down an instance. You can create snapshots of volumes in a Region and volumes on an Outpost. If you create a snapshot of a volume in a Region, the snapshot must be stored in the same Region as the volume. If you create a snapshot of a volume on an Outpost, the snapshot can be stored on the same Outpost as the volume, or in the Region for that Outpost. When a snapshot is created, any AWS Marketplace product codes that are associated with the source volume are propagated to the snapshot. You can take a snapshot of an attached volume that is in use. However, snapshots only capture data that has been written to your EBS volume at the time the snapshot command is issued; this might exclude any data that has been cached by any applications or the operating system. If you can pause any file systems on the volume long enough to take a snapshot, your snapshot should be complete. However, if you cannot pause all file writes to the volume, you should unmount the volume from within the instance, issue the snapshot command, and then remount the volume to ensure a consistent and complete snapshot. You may remount and use your volume while the snapshot status is pending. To create a snapshot for EBS volumes that serve as root devices, you should stop the instance before taking the snapshot. Snapshots that are taken from encrypted volumes are automatically encrypted. Volumes that are created from encrypted snapshots are also automatically encrypted. Your encrypted volumes and any associated snapshots always remain protected. You can tag your snapshots during creation. For more information, see Tagging your Amazon EC2 resources in the Amazon Elastic Compute Cloud User Guide. For more information, see Amazon Elastic Block Store and Amazon EBS encryption in the Amazon Elastic Compute Cloud User Guide.
 
 # Required Parameters
 - `VolumeId`: The ID of the EBS volume.
 
 # Optional Parameters
 - `Description`: A description for the snapshot.
+- `OutpostArn`: The Amazon Resource Name (ARN) of the AWS Outpost on which to create a local snapshot.   To create a snapshot of a volume in a Region, omit this parameter. The snapshot is created in the same Region as the volume.   To create a snapshot of a volume on an Outpost and store the snapshot in the Region, omit this parameter. The snapshot is created in the Region for the Outpost.   To create a snapshot of a volume on an Outpost and store the snapshot on an Outpost, specify the ARN of the destination Outpost. The snapshot must be created on the same Outpost as the volume.   For more information, see  Creating local snapshots from volumes on an Outpost in the Amazon Elastic Compute Cloud User Guide.
 - `TagSpecification`: The tags to apply to the snapshot during creation.
 - `dryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 """
@@ -1279,7 +1282,7 @@ create_snapshot(VolumeId, args::AbstractDict{String, <:Any}; aws_config::Abstrac
 """
     CreateSnapshots()
 
-Creates crash-consistent snapshots of multiple EBS volumes and stores the data in S3. Volumes are chosen by specifying an instance. Any attached volumes will produce one snapshot each that is crash-consistent across the instance. Boot volumes can be excluded by changing the parameters. 
+Creates crash-consistent snapshots of multiple EBS volumes and stores the data in S3. Volumes are chosen by specifying an instance. Any attached volumes will produce one snapshot each that is crash-consistent across the instance. Boot volumes can be excluded by changing the parameters.  You can create multi-volume snapshots of instances in a Region and instances on an Outpost. If you create snapshots from an instance in a Region, the snapshots must be stored in the same Region as the instance. If you create snapshots from an instance on an Outpost, the snapshots can be stored on the same Outpost as the instance, or in the Region for that Outpost.
 
 # Required Parameters
 - `InstanceSpecification`: The instance to specify which volumes should be included in the snapshots.
@@ -1288,6 +1291,7 @@ Creates crash-consistent snapshots of multiple EBS volumes and stores the data i
 - `CopyTagsFromSource`: Copies the tags from the specified volume to corresponding snapshot.
 - `Description`:  A description propagated to every snapshot specified by the instance.
 - `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+- `OutpostArn`: The Amazon Resource Name (ARN) of the AWS Outpost on which to create the local snapshots.   To create snapshots from an instance in a Region, omit this parameter. The snapshots are created in the same Region as the instance.   To create snapshots from an instance on an Outpost and store the snapshots in the Region, omit this parameter. The snapshots are created in the Region for the Outpost.   To create snapshots from an instance on an Outpost and store the snapshots on an Outpost, specify the ARN of the destination Outpost. The snapshots must be created on the same Outpost as the instance.   For more information, see  Creating multi-volume local snapshots from instances on an Outpost in the Amazon Elastic Compute Cloud User Guide.
 - `TagSpecification`: Tags to apply to every snapshot specified by the instance.
 """
 create_snapshots(InstanceSpecification; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("CreateSnapshots", Dict{String, Any}("InstanceSpecification"=>InstanceSpecification); aws_config=aws_config)
@@ -1628,7 +1632,7 @@ Creates a VPC endpoint for a specified service. An endpoint enables you to creat
 - `ClientToken`: Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see How to Ensure Idempotency.
 - `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 - `PolicyDocument`: (Interface and gateway endpoints) A policy to attach to the endpoint that controls access to the service. The policy must be in valid JSON format. If this parameter is not specified, we attach a default policy that allows full access to the service.
-- `PrivateDnsEnabled`: (Interface endpoint) Indicates whether to associate a private hosted zone with the specified VPC. The private hosted zone contains a record set for the default public DNS name for the service for the Region (for example, kinesis.us-east-1.amazonaws.com), which resolves to the private IP addresses of the endpoint network interfaces in the VPC. This enables you to make requests to the default public DNS name for the service instead of the public DNS names that are automatically generated by the VPC endpoint service. To use a private hosted zone, you must set the following VPC attributes to true: enableDnsHostnames and enableDnsSupport. Use ModifyVpcAttribute to set the VPC attributes. Default: true 
+- `PrivateDnsEnabled`: (Interface endpoint) Indicates whether to associate a private hosted zone with the specified VPC. The private hosted zone contains a record set for the default public DNS name for the service for the Region (for example, kinesis.us-east-1.amazonaws.com), which resolves to the private IP addresses of the endpoint network interfaces in the VPC. This enables you to make requests to the default public DNS name for the service instead of the public DNS names that are automatically generated by the VPC endpoint service. To use a private hosted zone, you must set the following VPC attributes to true: enableDnsHostnames and enableDnsSupport. Use ModifyVpcAttribute to set the VPC attributes.  Private DNS is not supported for Amazon S3 interface endpoints.  Default: true for supported endpoints
 - `RouteTableId`: (Gateway endpoint) One or more route table IDs.
 - `SecurityGroupId`: (Interface endpoint) The ID of one or more security groups to associate with the endpoint network interface.
 - `SubnetId`: (Interface and Gateway Load Balancer endpoints) The ID of one or more subnets in which to create an endpoint network interface. For a Gateway Load Balancer endpoint, you can specify one subnet only.
@@ -2437,7 +2441,7 @@ delete_vpc_endpoint_service_configurations(ServiceId, args::AbstractDict{String,
 """
     DeleteVpcEndpoints()
 
-Deletes one or more specified VPC endpoints. Deleting a gateway endpoint also deletes the endpoint routes in the route tables that were associated with the endpoint. Deleting an interface endpoint or a Gateway Load Balancer endpoint deletes the endpoint network interfaces. Gateway Load Balancer endpoints can only be deleted if the routes that are associated with the endpoint are deleted.
+Deletes one or more specified VPC endpoints. You can delete any of the following types of VPC endpoints.    Gateway endpoint,   Gateway Load Balancer endpoint,   Interface endpoint   The following rules apply when you delete a VPC endpoint:   When you delete a gateway endpoint, we delete the endpoint routes in the route tables that are associated with the endpoint.   When you delete a Gateway Load Balancer endpoint, we delete the endpoint network interfaces.  You can only delete Gateway Load Balancer endpoints when the routes that are associated with the endpoint are deleted.   When you delete an interface endpoint, we delete the endpoint network interfaces.  
 
 # Required Parameters
 - `VpcEndpointId`: One or more VPC endpoint IDs.
@@ -2596,6 +2600,21 @@ Describes the specified Elastic IP addresses or all of your Elastic IP addresses
 """
 describe_addresses(; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("DescribeAddresses"; aws_config=aws_config)
 describe_addresses(args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("DescribeAddresses", args; aws_config=aws_config)
+
+"""
+    DescribeAddressesAttribute()
+
+Describes the attributes of the specified Elastic IP addresses. For requirements, see Using reverse DNS for email applications.
+
+# Optional Parameters
+- `AllocationId`: [EC2-VPC] The allocation IDs.
+- `Attribute`: The attribute of the IP address.
+- `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+- `MaxResults`: The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned nextToken value.
+- `NextToken`: The token for the next page of results.
+"""
+describe_addresses_attribute(; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("DescribeAddressesAttribute"; aws_config=aws_config)
+describe_addresses_attribute(args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("DescribeAddressesAttribute", args; aws_config=aws_config)
 
 """
     DescribeAggregateIdFormat()
@@ -3107,7 +3126,7 @@ Describes the specified images (AMIs, AKIs, and ARIs) available to you or all of
 
 # Optional Parameters
 - `ExecutableBy`: Scopes the images by users with explicit launch permissions. Specify an AWS account ID, self (the sender of the request), or all (public AMIs).
-- `Filter`: The filters.    architecture - The image architecture (i386 | x86_64 | arm64).    block-device-mapping.delete-on-termination - A Boolean value that indicates whether the Amazon EBS volume is deleted on instance termination.    block-device-mapping.device-name - The device name specified in the block device mapping (for example, /dev/sdh or xvdh).    block-device-mapping.snapshot-id - The ID of the snapshot used for the EBS volume.    block-device-mapping.volume-size - The volume size of the EBS volume, in GiB.    block-device-mapping.volume-type - The volume type of the EBS volume (gp2 | io1 | io2 | st1 | sc1 | standard).    block-device-mapping.encrypted - A Boolean that indicates whether the EBS volume is encrypted.    description - The description of the image (provided during image creation).    ena-support - A Boolean that indicates whether enhanced networking with ENA is enabled.    hypervisor - The hypervisor type (ovm | xen).    image-id - The ID of the image.    image-type - The image type (machine | kernel | ramdisk).    is-public - A Boolean that indicates whether the image is public.    kernel-id - The kernel ID.    manifest-location - The location of the image manifest.    name - The name of the AMI (provided during image creation).    owner-alias - The owner alias, from an Amazon-maintained list (amazon | aws-marketplace). This is not the user-configured AWS account alias set using the IAM console. We recommend that you use the related parameter instead of this filter.    owner-id - The AWS account ID of the owner. We recommend that you use the related parameter instead of this filter.    platform - The platform. To only list Windows-based AMIs, use windows.    product-code - The product code.    product-code.type - The type of the product code (devpay | marketplace).    ramdisk-id - The RAM disk ID.    root-device-name - The device name of the root device volume (for example, /dev/sda1).    root-device-type - The type of the root device volume (ebs | instance-store).    state - The state of the image (available | pending | failed).    state-reason-code - The reason code for the state change.    state-reason-message - The message for the state change.    sriov-net-support - A value of simple indicates that enhanced networking with the Intel 82599 VF interface is enabled.    tag:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key Owner and the value TeamA, specify tag:Owner for the filter name and TeamA for the filter value.    tag-key - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.    virtualization-type - The virtualization type (paravirtual | hvm).  
+- `Filter`: The filters.    architecture - The image architecture (i386 | x86_64 | arm64).    block-device-mapping.delete-on-termination - A Boolean value that indicates whether the Amazon EBS volume is deleted on instance termination.    block-device-mapping.device-name - The device name specified in the block device mapping (for example, /dev/sdh or xvdh).    block-device-mapping.snapshot-id - The ID of the snapshot used for the EBS volume.    block-device-mapping.volume-size - The volume size of the EBS volume, in GiB.    block-device-mapping.volume-type - The volume type of the EBS volume (gp2 | io1 | io2 | st1 | sc1 | standard).    block-device-mapping.encrypted - A Boolean that indicates whether the EBS volume is encrypted.    description - The description of the image (provided during image creation).    ena-support - A Boolean that indicates whether enhanced networking with ENA is enabled.    hypervisor - The hypervisor type (ovm | xen).    image-id - The ID of the image.    image-type - The image type (machine | kernel | ramdisk).    is-public - A Boolean that indicates whether the image is public.    kernel-id - The kernel ID.    manifest-location - The location of the image manifest.    name - The name of the AMI (provided during image creation).    owner-alias - The owner alias (amazon | aws-marketplace). The valid aliases are defined in an Amazon-maintained list. This is not the AWS account alias that can be set using the IAM console. We recommend that you use the Owner request parameter instead of this filter.    owner-id - The AWS account ID of the owner. We recommend that you use the Owner request parameter instead of this filter.    platform - The platform. To only list Windows-based AMIs, use windows.    product-code - The product code.    product-code.type - The type of the product code (devpay | marketplace).    ramdisk-id - The RAM disk ID.    root-device-name - The device name of the root device volume (for example, /dev/sda1).    root-device-type - The type of the root device volume (ebs | instance-store).    state - The state of the image (available | pending | failed).    state-reason-code - The reason code for the state change.    state-reason-message - The message for the state change.    sriov-net-support - A value of simple indicates that enhanced networking with the Intel 82599 VF interface is enabled.    tag:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key Owner and the value TeamA, specify tag:Owner for the filter name and TeamA for the filter value.    tag-key - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.    virtualization-type - The virtualization type (paravirtual | hvm).  
 - `ImageId`: The image IDs. Default: Describes all images available to you.
 - `Owner`: Scopes the results to images with the specified owners. You can specify a combination of AWS account IDs, self, amazon, and aws-marketplace. If you omit this parameter, the results include all images for which you have launch permissions, regardless of ownership.
 - `dryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
@@ -4272,7 +4291,7 @@ describe_vpc_endpoint_service_permissions(ServiceId, args::AbstractDict{String, 
 """
     DescribeVpcEndpointServices()
 
-Describes available services to which you can create a VPC endpoint. When the service provider and the consumer have different accounts multiple Availability Zones, and the consumer views the VPC endpoint service information, the response only includes the common Availability Zones. For example, when the service provider account uses us-east-1a and us-east-1c and the consumer uses us-east-1a and us-east-1a and us-east-1b, the response includes the VPC endpoint services in the common Availability Zone, us-east-1a.
+Describes available services to which you can create a VPC endpoint. When the service provider and the consumer have different accounts in multiple Availability Zones, and the consumer views the VPC endpoint service information, the response only includes the common Availability Zones. For example, when the service provider account uses us-east-1a and us-east-1c and the consumer uses us-east-1a and us-east-1b, the response includes the VPC endpoint services in the common Availability Zone, us-east-1a.
 
 # Optional Parameters
 - `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
@@ -5218,6 +5237,21 @@ import_volume(availabilityZone, image, volume; aws_config::AbstractAWSConfig=glo
 import_volume(availabilityZone, image, volume, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("ImportVolume", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("availabilityZone"=>availabilityZone, "image"=>image, "volume"=>volume), args)); aws_config=aws_config)
 
 """
+    ModifyAddressAttribute()
+
+Modifies an attribute of the specified Elastic IP address. For requirements, see Using reverse DNS for email applications.
+
+# Required Parameters
+- `AllocationId`: [EC2-VPC] The allocation ID.
+
+# Optional Parameters
+- `DomainName`: The domain name to modify for the IP address.
+- `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+"""
+modify_address_attribute(AllocationId; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("ModifyAddressAttribute", Dict{String, Any}("AllocationId"=>AllocationId); aws_config=aws_config)
+modify_address_attribute(AllocationId, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("ModifyAddressAttribute", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("AllocationId"=>AllocationId), args)); aws_config=aws_config)
+
+"""
     ModifyAvailabilityZoneGroup()
 
 Changes the opt-in status of the Local Zone and Wavelength Zone group for your account. Use  DescribeAvailabilityZones to view the value for GroupName.
@@ -5811,7 +5845,7 @@ Modifies attributes of a specified VPC endpoint. The attributes that you can mod
 - `AddSubnetId`: (Interface and Gateway Load Balancer endpoints) One or more subnet IDs in which to serve the endpoint. For a Gateway Load Balancer endpoint, you can specify only one subnet.
 - `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 - `PolicyDocument`: (Interface and gateway endpoints) A policy to attach to the endpoint that controls access to the service. The policy must be in valid JSON format.
-- `PrivateDnsEnabled`: (Interface endpoint) Indicates whether a private hosted zone is associated with the VPC.
+- `PrivateDnsEnabled`: (Interface endpoint) Indicates whether a private hosted zone is associated with the VPC.  Private DNS is not supported for Amazon S3 interface endpoints. 
 - `RemoveRouteTableId`: (Gateway endpoint) One or more route table IDs to disassociate from the endpoint.
 - `RemoveSecurityGroupId`: (Interface endpoint) One or more security group IDs to disassociate from the network interface.
 - `RemoveSubnetId`: (Interface endpoint) One or more subnets IDs in which to remove the endpoint.
@@ -6091,7 +6125,7 @@ Registers an AMI. When you're creating an AMI, this is the final step you must c
 
 # Optional Parameters
 - `BillingProduct`: The billing product codes. Your account must be authorized to specify billing product codes. Otherwise, you can use the AWS Marketplace to bill for the use of an AMI.
-- `BlockDeviceMapping`: The block device mapping entries.
+- `BlockDeviceMapping`: The block device mapping entries. If you create an AMI on an Outpost, then all backing snapshots must be on the same Outpost or in the Region of that Outpost. AMIs on an Outpost that include local snapshots can be used to launch instances on the same Outpost only. For more information,  Amazon EBS local snapshots on Outposts in the Amazon Elastic Compute Cloud User Guide.
 - `ImageLocation`: The full path to your AMI manifest in Amazon S3 storage. The specified bucket must have the aws-exec-read canned access control list (ACL) to ensure that it can be accessed by Amazon EC2. For more information, see Canned ACLs in the Amazon S3 Service Developer Guide.
 - `architecture`: The architecture of the AMI. Default: For Amazon EBS-backed AMIs, i386. For instance store-backed AMIs, the architecture specified in the manifest file.
 - `description`: A description for your AMI.
@@ -6408,6 +6442,21 @@ Creates a Spot Instance request. For more information, see Spot Instance request
 """
 request_spot_instances(; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("RequestSpotInstances"; aws_config=aws_config)
 request_spot_instances(args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("RequestSpotInstances", args; aws_config=aws_config)
+
+"""
+    ResetAddressAttribute()
+
+Resets the attribute of the specified IP address. For requirements, see Using reverse DNS for email applications.
+
+# Required Parameters
+- `AllocationId`: [EC2-VPC] The allocation ID.
+- `Attribute`: The attribute of the IP address.
+
+# Optional Parameters
+- `DryRun`: Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+"""
+reset_address_attribute(AllocationId, Attribute; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("ResetAddressAttribute", Dict{String, Any}("AllocationId"=>AllocationId, "Attribute"=>Attribute); aws_config=aws_config)
+reset_address_attribute(AllocationId, Attribute, args::AbstractDict{String, <:Any}; aws_config::AbstractAWSConfig=global_aws_config()) = ec2("ResetAddressAttribute", Dict{String, Any}(mergewith(_merge, Dict{String, Any}("AllocationId"=>AllocationId, "Attribute"=>Attribute), args)); aws_config=aws_config)
 
 """
     ResetEbsDefaultKmsKeyId()
